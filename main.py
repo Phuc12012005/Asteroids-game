@@ -23,7 +23,7 @@ def main():
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
-    Bullet.containers = (updatable, drawable)
+    Bullet.containers = (updatable, drawable, bullets)
 
 
     #initialize 
@@ -36,21 +36,28 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        
+            
         screen.fill("black")
-
         # draw object
         for object in drawable:
-            object.draw(screen)
-        
-        #update position
-        updatable.update(dt)
+            object.draw(screen)        
 
         #detect collision between player and asteroids
         for asteroid in asteroids:
             if asteroid.detect_collision(player):
                 print("Game over!")
                 return
+            
+            #dectect collision between asteroids and bullet
+            for bullet in bullets:
+                if bullet.detect_collision(asteroid):
+                    asteroid.split()
+                    bullet.kill()
+        
+        
+
+        #update position
+        updatable.update(dt)
 
         #Update the full display surface to the screen, be sure to call it last
         pygame.display.flip()
